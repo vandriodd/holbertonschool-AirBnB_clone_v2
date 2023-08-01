@@ -8,6 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
 class BaseModel:
     """A base class for all hbnb models"""
     id = Column(String(60), primary_key=True, nullable=False)
@@ -49,9 +50,9 @@ class BaseModel:
         dictionary['updated_at'] = self.updated_at.isoformat()
 
         if hasattr(self, '_sa_instance_state'):
-            dictionary["_sa_instance_state"].delete()     
+            dictionary["_sa_instance_state"].delete()
         return dictionary
-    
+
     def delete(self):
         from models import storage
         """ Delete the current instance from the storage """
