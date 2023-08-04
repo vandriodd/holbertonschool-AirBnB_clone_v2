@@ -5,7 +5,6 @@ from sqlalchemy import Table, Column, String, Integer, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from os import getenv
 from models.review import Review
-from models.amenity import Amenity
 
 
 place_amenity = Table('place_amenity', Base.metadata,
