@@ -1,10 +1,19 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Float
+from sqlalchemy import Table, Column, String, Integer, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from os import getenv
 from models.review import Review
+from models.amenity import Amenity
+
+
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id', String(60), ForeignKey("places_id"),
+                             primary_key=True, nullable=False),
+                      Column('amenity_id', String(60),
+                             ForeignKey("amenities.id"),
+                             primary_key=True, nullable=False))
 
 
 class Place(BaseModel, Base):
@@ -23,6 +32,8 @@ class Place(BaseModel, Base):
         longitude = Column(Float, nullable=True)
         reviews = relationship('Review', backref="place",
                                cascade="all, delete, delete-orphan")
+        amenities = relationship('Amenity', secondary=place_amenity,
+                                 viewonly=False, backref="place_amenities")
     else:
         city_id = ""
         user_id = ""
@@ -41,3 +52,13 @@ class Place(BaseModel, Base):
             """Get reviews for current Place.id"""
             matching_reviews = [Review.all(Review.place_id == self.id)]
             return matching_reviews
+
+        @property
+        def amenities(self):
+            """get amenities for current place"""
+            return [Amenity.all(Amenity.id == self.id)]
+        
+        @amenities.setter
+        def amenities(self, obj=None):
+            if type(obj) is Amenity and obj.id not in self.amenity_ids:
+                self.amenity_ids.append(obj.id)
