@@ -40,7 +40,7 @@ class DBStorage:
     def all(self, cls=None):
         """Return all objects of a class"""
         dictionary = {}
-        classes = [State, City]
+        classes = [State, City, User, Place, Review]
         if cls:
             for instance in self.__session.query(eval(cls)).all():
                 key = f"{instance.__class__.__name__}.{instance.id}"
