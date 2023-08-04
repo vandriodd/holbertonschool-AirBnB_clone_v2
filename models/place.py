@@ -5,6 +5,7 @@ from sqlalchemy import Table, Column, String, Integer, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from os import getenv
 from models.review import Review
+from models.amenity import Amenity
 
 
 place_amenity = Table('place_amenity', Base.metadata,
@@ -55,9 +56,9 @@ class Place(BaseModel, Base):
         @property
         def amenities(self):
             """get amenities for current place"""
-            return [Amenity.all(Amenity.id == self.id)]
+            return self.amenity_ids
         
         @amenities.setter
         def amenities(self, obj=None):
-            if type(obj) is Amenity and obj.id not in self.amenity_ids:
+            if  obj.__class__.__name__ == 'Amenity' and obj.id not in self.amenity_ids:
                 self.amenity_ids.append(obj.id)
