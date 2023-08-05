@@ -23,6 +23,8 @@ class BaseModel:
                     if k == "updated_at" or k == "created_at":
                         v = datetime.strptime(v, "%Y-%m-%dT%H:%M:%S.%f")
                     setattr(self, k, v)
+            if not self.id:
+                self.id = str(uuid4())
         else:
             self.id = str(uuid4())
             self.created_at = datetime.now()
