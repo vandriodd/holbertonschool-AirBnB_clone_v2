@@ -74,3 +74,7 @@ class DBStorage:
         # Create a scoped session from db_sessions and assign
         Session = scoped_session(db_sessions)
         self.__session = Session
+
+    def close(self):
+        """Closes the active session"""
+        self.__session.remove()
