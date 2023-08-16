@@ -23,6 +23,8 @@ class BaseModel:
                     if k == "updated_at" or k == "created_at":
                         v = datetime.strptime(v, "%Y-%m-%dT%H:%M:%S.%f")
                     setattr(self, k, v)
+            if not self.__dict__.get("created_at"):
+                self.created_at = datetime.now()
             if not self.id:
                 self.id = str(uuid4())
         else:
@@ -45,14 +47,13 @@ class BaseModel:
     def to_dict(self):
         """Convert instance into dict format"""
         dictionary = {}
+        if self.__dict__.get("_sa_instance_state"):
+            self.__dict__.pop("_sa_instance_state")
         dictionary.update(self.__dict__)
         dictionary.update({'__class__':
                           (str(type(self)).split('.')[-1]).split('\'')[0]})
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
-
-        if hasattr(self, '_sa_instance_state'):
-           del dictionary['_sa_instance_state']
         return dictionary
 
     def delete(self):
