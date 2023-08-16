@@ -42,7 +42,7 @@ class DBStorage:
         dictionary = {}
         classes = [State, City, User, Place, Review, Amenity]
         if cls:
-            for instance in self.__session.query(eval(cls)).all():
+            for instance in self.__session.query(cls).all():
                 key = f"{instance.__class__.__name__}.{instance.id}"
                 dictionary[key] = instance
         else:
