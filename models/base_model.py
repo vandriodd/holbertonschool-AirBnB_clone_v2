@@ -25,6 +25,7 @@ class BaseModel:
                     setattr(self, k, v)
             if not self.__dict__.get("created_at"):
                 self.created_at = datetime.now()
+                self.updated_at = self.created_at
             if not self.id:
                 self.id = str(uuid4())
         else:
@@ -35,7 +36,8 @@ class BaseModel:
     def __str__(self):
         """Returns a string representation of the instance"""
         cls = (str(type(self)).split('.')[-1]).split('\'')[0]
-        return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
+        instance_dict = self.to_dict()
+        return '[{}] ({}) {}'.format(cls, self.id, instance_dict)
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
@@ -47,9 +49,8 @@ class BaseModel:
     def to_dict(self):
         """Convert instance into dict format"""
         dictionary = {}
-        if self.__dict__.get("_sa_instance_state"):
-            self.__dict__.pop("_sa_instance_state")
         dictionary.update(self.__dict__)
+        dictionary.pop("_sa_instance_state", None)
         dictionary.update({'__class__':
                           (str(type(self)).split('.')[-1]).split('\'')[0]})
         dictionary['created_at'] = self.created_at.isoformat()
@@ -57,6 +58,6 @@ class BaseModel:
         return dictionary
 
     def delete(self):
-        from models import storage
         """ Delete the current instance from the storage """
+        from models import storage
         return storage.delete(self)
