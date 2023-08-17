@@ -9,8 +9,8 @@ from os import getenv
 class State(BaseModel, Base):
     """State class"""
     __tablename__ = 'states'
-    name = Column(String(128), nullable=False)
     if getenv('HBNB_TYPE_STORAGE') == 'db':
+        name = Column(String(128), nullable=False)
         cities = relationship('City', backref="state",
                               cascade="all, delete, delete-orphan")
     else:
@@ -19,9 +19,12 @@ class State(BaseModel, Base):
         @property
         def cities(self):
             """Getter"""
+            from models import storage
+            from models.city import City
             all_cities = []
-            for key, value in self.all().items():
-                key = key.split(".")
-                if key == 'City' and value.state_id == self.id:
-                    all_cities.append(value)
+            for city_obj in storage.all(City).values():
+                # key = key.split(".")[0]
+                # if key == "City" and city_obj.state_id == self.id:
+                if city_obj.state_id == self.id:
+                    all_cities.append(city_obj)
             return all_cities
