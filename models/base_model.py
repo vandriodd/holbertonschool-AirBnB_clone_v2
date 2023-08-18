@@ -16,13 +16,13 @@ class BaseModel:
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
-        """Instatntiates a new model"""
+        """Instantiates a new model"""
         if kwargs:
+            kwargs.pop("__class__", None)
             for k, v in kwargs.items():
-                if k != "__class__":
-                    if k == "updated_at" or k == "created_at":
-                        v = datetime.strptime(v, "%Y-%m-%dT%H:%M:%S.%f")
-                    setattr(self, k, v)
+                if k == "updated_at" or k == "created_at":
+                    v = datetime.strptime(v, "%Y-%m-%dT%H:%M:%S.%f")
+                setattr(self, k, v)
             if not self.__dict__.get("created_at"):
                 self.created_at = datetime.now()
                 self.updated_at = self.created_at
@@ -36,7 +36,8 @@ class BaseModel:
     def __str__(self):
         """Returns a string representation of the instance"""
         cls = (str(type(self)).split('.')[-1]).split('\'')[0]
-        instance_dict = self.to_dict()
+        instance_dict = {k: v for k, v in self.__dict__.items()}
+        instance_dict.pop("_sa_instance_state", None)
         return '[{}] ({}) {}'.format(cls, self.id, instance_dict)
 
     def save(self):
