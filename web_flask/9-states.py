@@ -18,7 +18,7 @@ def close_connection(e):
 @app.route('/states', defaults={'id': None}, strict_slashes=False)
 @app.route('/states/<id>', strict_slashes=False)
 def display_state():
-    """ Displays state and cities by state id """
+    """ Displays state by id or states """
     states = storage.all(State).values()
 
     if id is None:
