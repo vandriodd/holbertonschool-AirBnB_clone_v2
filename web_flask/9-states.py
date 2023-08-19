@@ -15,19 +15,18 @@ def close_connection(e):
     storage.close()
 
 
-@app.route('/states', defaults={'id': None}, strict_slashes=False)
-@app.route('/states/<id>', strict_slashes=False)
-def display_state():
-    """ Displays state by id or states """
+@app.route('/states', strict_slashes=False)
+def display_states():
+    """ Displays a list of states """
     states = storage.all(State).values()
+    return render_template('7-states_list.html', states=states)
 
-    if id is None:
-        all_states = states.values()
-    else:
-        key = f"State.{id}"
-        all_states = [states[key]] if key in states else []
-    return render_template('9-states.html', states=all_states,
-                           len=len(all_states))
+
+@app.route('/states/<id>', strict_slashes=False)
+def display_state(id):
+    """ Displays a state by id and its cities"""
+    state = storage.all(State).get(f"State.{id}")
+    return render_template('9-states.html', state=state)
 
 
 if __name__ == '__main__':
